@@ -60,6 +60,8 @@ python -m instructoravs generate "Create a step-by-step guide for user login"
 
 Keyboard: `Ctrl+K` (`⌘K` on macOS) opens the playbook browser with the filter focused.
 The browser remembers the last topic area you selected; the category shortcuts override it.
+Topic-area changes, arrow/Home/End movement between cards, and the number of matching
+playbooks as the filter changes are announced through a polite live region for screen readers.
 Toolbar choices (detail, tone, audience and formats) persist between sessions; the
 **Reset defaults** button in the toolbar clears them and the picker's remembered topic;
 a small “custom” badge marks when the toolbar differs from its defaults.

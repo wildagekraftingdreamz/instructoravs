@@ -903,6 +903,57 @@
     }
   }
 
+  let pickerAnnouncement = 0;
+  let pickerSearchTimer = 0;
+
+  function announcePicker(message) {
+    const live = $("pickerLive");
+    if (!live) return;
+    if (live.textContent !== message) {
+      live.textContent = message;
+      return;
+    }
+    // Clear the identical text briefly so it is announced again. A timer is
+    // used because animation frames pause while the tab is in the background.
+    const ticket = ++pickerAnnouncement;
+    live.textContent = "";
+    setTimeout(() => {
+      if (ticket === pickerAnnouncement) live.textContent = message;
+    }, 50);
+  }
+
+  function pickerCategoryLabel() {
+    return $("playbookCategory").selectedOptions[0]?.textContent.trim() || "All topic areas";
+  }
+
+  function announcePickerCategory(prefix = "Topic area") {
+    const count = document.querySelectorAll("#playbookList .playbook-item").length;
+    const noun = count === 1 ? "playbook" : "playbooks";
+    announcePicker(`${prefix}: ${pickerCategoryLabel()}. ${count} ${noun}.`);
+  }
+
+  function announcePickerResults() {
+    const query = $("playbookSearch").value.trim();
+    const count = document.querySelectorAll("#playbookList .playbook-item").length;
+    const noun = count === 1 ? "playbook" : "playbooks";
+    if (!query) {
+      announcePicker(`${count} ${noun} in ${pickerCategoryLabel()}.`);
+      return;
+    }
+    const scope = $("playbookCategory").value === "all" ? "" : ` in ${pickerCategoryLabel()}`;
+    if (!count) {
+      announcePicker(`No playbooks match “${query}”${scope}.`);
+      return;
+    }
+    const verb = count === 1 ? "matches" : "match";
+    announcePicker(`${count} ${noun} ${verb} “${query}”${scope}.`);
+  }
+
+  function queuePickerResults() {
+    clearTimeout(pickerSearchTimer);
+    pickerSearchTimer = setTimeout(announcePickerResults, 250);
+  }
+
   async function openPlaybooks(category = null) {
     $("playbookSearch").value = "";
     $("playbookDialog").showModal();
@@ -925,6 +976,7 @@
     select.value = known ? wanted : "all";
     rememberCategory(select.value);
     renderPlaybooks();
+    announcePickerCategory("Playbook picker opened. Topic area");
   }
 
   function ensureCategoryOptions() {
@@ -974,10 +1026,11 @@
     return 5;
   }
 
-  function setActivePlaybook(index) {
+  function setActivePlaybook(index, { announce = false } = {}) {
     const cards = [...document.querySelectorAll("#playbookList .playbook-item")];
     if (!cards.length) {
       state.playbookIndex = -1;
+      if (announce) announcePicker("No playbooks match the current filter.");
       return;
     }
     state.playbookIndex = Math.max(0, Math.min(index, cards.length - 1));
@@ -990,10 +1043,23 @@
         card.removeAttribute("aria-current");
       }
     });
-    cards[state.playbookIndex].scrollIntoView({ block: "nearest" });
+    const activeCard = cards[state.playbookIndex];
+    activeCard.scrollIntoView({ block: "nearest" });
+    if (!announce) return;
+    const playbook = state.playbooks.find((item) => item.key === activeCard.dataset.playbook);
+    if (!playbook) {
+      announcePicker(`${state.playbookIndex + 1} of ${cards.length}.`);
+      return;
+    }
+    const steps = `${playbook.steps} step${playbook.steps === 1 ? "" : "s"}`;
+    announcePicker(
+      `${state.playbookIndex + 1} of ${cards.length}: ${playbook.title}. ` +
+      `${playbook.category}, ${steps}, ${playbook.time}.`
+    );
   }
 
   function renderPlaybooks() {
+    clearTimeout(pickerSearchTimer);
     ensureCategoryOptions();
     const query = $("playbookSearch").value.trim().toLowerCase();
     const category = $("playbookCategory").value || "all";
@@ -1038,6 +1104,7 @@
 
   function usePlaybook(key) {
     const playbook = state.playbooks.find((item) => item.key === key);
+    clearTimeout(pickerSearchTimer);
     if (!playbook) return;
     $("instruction").value = playbook.brief;
     if (state.kind !== "guide") setKind("guide", { silent: true });
@@ -1121,10 +1188,14 @@
       .forEach((control) => control.addEventListener("change", saveToolbar));
     $("resetPrefs").addEventListener("click", resetPreferences);
     $("playbookBtn").addEventListener("click", () => openPlaybooks());
-    $("playbookSearch").addEventListener("input", renderPlaybooks);
+    $("playbookSearch").addEventListener("input", () => {
+      renderPlaybooks();
+      queuePickerResults();
+    });
     $("playbookCategory").addEventListener("change", () => {
       rememberCategory($("playbookCategory").value);
       renderPlaybooks();
+      announcePickerCategory();
     });
     $("playbookSearch").addEventListener("keydown", (event) => {
       if (event.key !== "Enter") return;
@@ -1135,6 +1206,7 @@
     });
     $("playbookDialog").addEventListener("keydown", (event) => {
       if (event.ctrlKey || event.metaKey || event.altKey) return;
+      if (event.target instanceof HTMLSelectElement) return;
       const cards = [...document.querySelectorAll("#playbookList .playbook-item")];
       if (!cards.length) return;
       const arrows = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 };
@@ -1148,7 +1220,8 @@
       }
       if (target === null) return;
       event.preventDefault();
-      setActivePlaybook(target);
+      clearTimeout(pickerSearchTimer);
+      setActivePlaybook(target, { announce: true });
       if (document.activeElement?.closest(".playbook-item")) {
         cards[state.playbookIndex]?.focus();
       }
