@@ -61,6 +61,7 @@
         <label class="pill"><input type="checkbox" value="md" checked><span>.md</span></label>
         <label class="pill"><input type="checkbox" value="txt" checked><span>.txt</span></label>
         <label class="pill"><input type="checkbox" value="pdf" checked><span>.pdf</span></label>
+        <label class="pill"><input type="checkbox" value="docx" checked><span>.docx</span></label>
         <label class="pill"><input type="checkbox" value="html"><span>.html</span></label>
       </div>
     </div>
@@ -252,6 +253,7 @@
         <span class="chip" id="versionChip" hidden>v1</span>
         <button class="ghost-btn" id="mdBtn" disabled>⤓ .md</button>
         <button class="ghost-btn" id="pdfBtn" disabled>⤓ .pdf</button>
+        <button class="ghost-btn" id="docxBtn" disabled>⤓ .docx</button>
         <button class="ghost-btn" id="editBtn" disabled>✎ Edit</button>
       </div>
     </div>
@@ -320,8 +322,8 @@
 </main>
 
 <footer>
-  Documents are Markdown-first and versioned on this machine. PDFs are written by the
-  bundled engine — no reportlab, no browser printing, no upload.
+  Documents are Markdown-first and versioned on this machine. PDFs and Word files are
+  written by the bundled engine — no reportlab, no browser printing, no upload.
 </footer>
 
 <!-- ── annotate a version ────────────────────────────────────────────────── -->
@@ -403,6 +405,6 @@
 
 <div id="toast" class="toast" hidden></div>
 
-<script src="/static/app.js?v=10"></script>
+<script src="/static/app.js?v=11"></script>
 </body>
 </html>

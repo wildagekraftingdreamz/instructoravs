@@ -39,7 +39,7 @@ class GenerateRequest(BaseModel):
     detail: str | None = None
     prefs: dict[str, Any] = Field(default_factory=dict)
     spec: dict[str, Any] | None = None
-    formats: list[str] = Field(default_factory=lambda: ["md", "txt", "pdf"])
+    formats: list[str] = Field(default_factory=lambda: ["md", "txt", "pdf", "docx"])
     message: str = "Initial version"
 
 
@@ -49,7 +49,7 @@ class VersionRequest(BaseModel):
     message: str = "Updated"
     detail: str | None = None
     prefs: dict[str, Any] = Field(default_factory=dict)
-    formats: list[str] = Field(default_factory=lambda: ["md", "txt", "pdf"])
+    formats: list[str] = Field(default_factory=lambda: ["md", "txt", "pdf", "docx"])
 
 
 class AnnotateRequest(BaseModel):
@@ -343,6 +343,7 @@ def file(doc_id: str, format: str = "pdf", version: int | None = None, inline: b
         "txt": "text/plain; charset=utf-8",
         "html": "text/html; charset=utf-8",
         "pdf": "application/pdf",
+        "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     }[fmt]
     disposition = "inline" if inline else "attachment"
     filename = f"{document.id}-v{(document.version(version).number if document.version(version) else 1):04d}.{fmt}"

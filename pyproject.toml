@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "instructoravs"
 version = "1.0.0"
-description = "Generate, version and export IT help guides and CVs as Markdown, text, HTML and PDF."
+description = "Generate, version and export IT help guides and CVs as Markdown, text, HTML, PDF and Word."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }

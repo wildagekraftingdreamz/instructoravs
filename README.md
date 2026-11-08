@@ -1,14 +1,15 @@
 # Instructoravs
 
 Turn one sentence into a finished, versioned IT help guide or CV — then export it as
-Markdown, plain text, HTML or PDF. Everything runs on your machine: no API keys, no
-uploads, no reportlab, no browser "print to PDF".
+Markdown, plain text, HTML, PDF or Word (`.docx`). Everything runs on your machine: no
+API keys, no uploads, no reportlab, no browser "print to PDF".
 
 ```text
 brief ──► playbook / spec ──► blocks ──► content.md  (source of truth)
                                           ├── content.txt
                                           ├── content.html
-                                          └── content.pdf
+                                          ├── content.pdf
+                                          └── content.docx
 ```
 
 ## What it does
@@ -17,7 +18,7 @@ brief ──► playbook / spec ──► blocks ──► content.md  (source o
 |---|---|
 | "Create a step-by-step guide for user login" → structured text | `instructoravs/guides.py` (18 built-in playbooks) + `builder.py` |
 | Markdown formatting handled and converted to plain text | `markdown.py` parser, `render_text.py` |
-| Store documents as `.md`, `.txt`, `.pdf` (and `.html`) | `store.py` |
+| Store documents as `.md`, `.txt`, `.pdf`, `.docx` (and `.html`) | `store.py` |
 | Versions for different levels of detail | `--detail brief\|standard\|detailed` creates separate versions |
 | Track changes, annotations, corrections | version history, `annotate`, `diff`, `restore`, three-way `merge` |
 | Generate text to preferences | `prefs.py`: tone, audience, numbering, checklist steps, emphasis, page size, accent |
@@ -54,7 +55,7 @@ python -m instructoravs generate "Create a step-by-step guide for user login"
   a guided **Form** (guide and CV field sets with repeatable steps/roles and “View JSON”),
   or a JSON spec.
 - **Document** — rendered preview, raw Markdown, plain text, and an inline PDF view;
-  download buttons for `.md` / `.pdf`; hand-edit Markdown as a new version.
+  download buttons for `.md` / `.pdf` / `.docx`; hand-edit Markdown as a new version.
 - **Versions** — history with notes, compare, annotate, restore, CSV export.
 - **Library** — every document in the store, most recent first.
 
@@ -77,7 +78,7 @@ as the secondary, uppercase micro-labels, and a violet left edge on the document
 instructoravs generate "brief" [--kind auto|guide|cv] [--title T]
                    [--detail brief|standard|detailed] [--tone professional|friendly|concise|formal]
                    [--audience general|beginner|expert] [--pref key=value ...]
-                   [--spec file.json] [--format md,txt,pdf,html] [--out DIR] [--message M]
+                   [--spec file.json] [--format md,txt,pdf,docx,html] [--out DIR] [--message M]
 
 instructoravs list [--json]
 instructoravs show DOC [-v N] [--format md|txt] [--out FILE]
@@ -87,8 +88,8 @@ instructoravs annotate DOC "note" [-v N]
 instructoravs restore DOC -v N [--message M]
 instructoravs merge DOC BASE OURS THEIRS
 instructoravs render DOC [-v N] [--format ...] [--out DIR]
-instructoravs export DOC [-v N] --format csv|json|slides|md|txt|html|pdf [--out PATH]
-instructoravs convert FILE.md --to md,txt,pdf,html --out DIR
+instructoravs export DOC [-v N] --format csv|json|slides|md|txt|html|pdf|docx [--out PATH]
+instructoravs convert FILE.md --to md,txt,pdf,docx,html --out DIR
 instructoravs import FILE.md [--title T]
 instructoravs playbooks
 instructoravs prefs
@@ -172,6 +173,7 @@ data/documents/
         content.md                # source of truth
         content.txt
         content.pdf
+        content.docx
         content.html              # only when requested
         version.json              # message, parent, digest, annotations, prefs
       v0002/ ...
@@ -186,10 +188,18 @@ unique prefix is enough to address a document.
 `POST /api/documents` · `GET /api/documents/{id}?version=N` ·
 `POST /api/documents/{id}/versions` · `POST .../versions/{n}/annotate` ·
 `POST .../versions/{n}/restore` · `GET /api/documents/{id}/diff?a=&b=` ·
-`POST /api/documents/{id}/merge` · `GET /api/documents/{id}/file?format=pdf&version=N` ·
+`POST /api/documents/{id}/merge` · `GET /api/documents/{id}/file?format=pdf|docx&version=N` ·
 `GET /api/documents/{id}/export?format=csv|json|slides`.
 
 Interactive docs at `/api/docs`.
+
+## The Word engine
+
+`.docx` is written directly as Office Open XML, so Word support adds no runtime
+dependency. Headings, lists, checkboxes, tables, code blocks, rules and hyperlinks use
+the same block model as the preview; styles carry the accent colour, table header wash
+and footer page numbers. The package is standard enough for Word, LibreOffice and
+Google Docs to open and edit.
 
 ## The PDF engine
 
@@ -208,8 +218,8 @@ python -m unittest discover -s tests -v
 
 The suite covers inline parsing, Markdown round-tripping, nested lists and tables,
 text/HTML escaping, PDF structure (xref offsets, object headers, page count, stream
-decompression), the builders, storage/versioning, three-way merge, exporters and the
-CLI end to end.
+decompression), DOCX package structure and XML validity for guides and CVs, the builders,
+storage/versioning, three-way merge, exporters and the CLI end to end.
 
 ## Notes and limits
 

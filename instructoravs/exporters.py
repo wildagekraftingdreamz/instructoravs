@@ -20,7 +20,7 @@ from .blocks import (
     inline_text,
 )
 
-EXPORT_FORMATS = ("md", "txt", "pdf", "html", "csv", "json", "slides")
+EXPORT_FORMATS = ("md", "txt", "pdf", "docx", "html", "csv", "json", "slides")
 
 
 def step_rows(blocks: list[Block]) -> list[dict[str, str]]:

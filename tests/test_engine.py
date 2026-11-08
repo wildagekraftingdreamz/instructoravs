@@ -8,8 +8,10 @@ import json
 import re
 import tempfile
 import unittest
+import zipfile
 import zlib
 from pathlib import Path
+from xml.etree import ElementTree
 
 from instructoravs import builder, cli, guides
 from instructoravs.blocks import BulletList, Heading, OrderedList, Table
@@ -17,6 +19,7 @@ from instructoravs.exporters import to_csv, to_json, to_slides
 from instructoravs.markdown import parse_inline, parse_markdown
 from instructoravs.merge import merge3
 from instructoravs.prefs import Prefs
+from instructoravs.render_docx import render_docx
 from instructoravs.render_html import render_html, render_html_fragment
 from instructoravs.render_md import render_markdown
 from instructoravs.render_pdf import render_pdf
@@ -111,6 +114,47 @@ class RenderTests(unittest.TestCase):
         self.assert_pdf(data)
         count = int(re.search(rb"/Count (\d+)", data).group(1))
         self.assertGreaterEqual(count, 2)
+
+    def test_docx_is_a_valid_word_package_for_a_guide(self) -> None:
+        prefs = Prefs(detail="detailed")
+        data = render_docx(self.blocks, "Signing in with your work account", prefs, subject="guide")
+        self.assertTrue(data.startswith(b"PK"))
+        with zipfile.ZipFile(io.BytesIO(data)) as archive:
+            names = set(archive.namelist())
+            self.assertIn("word/document.xml", names)
+            self.assertIn("word/styles.xml", names)
+            self.assertIn("word/numbering.xml", names)
+            self.assertIn("word/footer1.xml", names)
+            for name in names:
+                if name.endswith(".xml") or name.endswith(".rels"):
+                    ElementTree.fromstring(archive.read(name))
+            document = archive.read("word/document.xml").decode("utf-8")
+        self.assertIn("Signing in with your work account", document)
+        self.assertIn("<w:tbl>", document)
+        self.assertIn("Troubleshooting", document)
+        self.assertIn("<w:numPr>", document)
+
+    def test_docx_renders_cv_sections_and_links(self) -> None:
+        spec = {
+            "kind": "cv",
+            "name": "Alex Morgan",
+            "headline": "Senior IT Support Engineer",
+            "contact": {"email": "alex@example.com", "linkedin": "linkedin.com/in/alex"},
+            "summary": "Eight years in support.",
+            "skills": {"Platforms": ["Windows 11", "macOS"]},
+            "experience": [{"role": "Senior Engineer", "company": "Northwind", "bullets": ["Cut onboarding from 90 to 35 minutes."]}],
+            "projects": [{"name": "SSPR", "summary": "Rolled out self-service reset.", "link": "https://example.com/sspr"}],
+        }
+        kind, title, blocks, prefs = builder.build("", spec=spec, prefs=Prefs(detail="detailed"))
+        self.assertEqual(kind, "cv")
+        data = render_docx(blocks, title, prefs, subject="cv")
+        with zipfile.ZipFile(io.BytesIO(data)) as archive:
+            document = archive.read("word/document.xml").decode("utf-8")
+            rels = archive.read("word/_rels/document.xml.rels").decode("utf-8")
+        self.assertIn("ALEX MORGAN", document)
+        self.assertIn("Core skills", document)
+        self.assertIn("Senior Engineer", document)
+        self.assertIn("https://example.com/sspr", rels)
 
     def assert_pdf(self, data: bytes) -> None:
         self.assertTrue(data.startswith(b"%PDF-1.7"))
@@ -252,7 +296,7 @@ class StoreTests(unittest.TestCase):
             document = store.create("VPN from home", "guide", blocks, prefs)
             self.assertEqual(document.latest.number, 1)
             folder = document.path / "versions" / "v0001"
-            for name in ("content.md", "content.txt", "content.pdf"):
+            for name in ("content.md", "content.txt", "content.pdf", "content.docx"):
                 self.assertTrue((folder / name).exists(), name)
 
             store.annotate(document.id, "Step 3 needs the new profile name", number=1)

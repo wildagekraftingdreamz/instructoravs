@@ -21,13 +21,14 @@ from typing import Any, Iterable
 from .blocks import Block, word_count
 from .markdown import parse_markdown
 from .prefs import Prefs
+from .render_docx import render_docx
 from .render_html import render_html
 from .render_md import render_markdown
 from .render_pdf import render_pdf
 from .render_text import render_text
 
-DEFAULT_FORMATS = ("md", "txt", "pdf")
-VALID_FORMATS = ("md", "txt", "pdf", "html")
+DEFAULT_FORMATS = ("md", "txt", "pdf", "docx")
+VALID_FORMATS = ("md", "txt", "pdf", "html", "docx")
 
 
 def _now() -> str:
@@ -314,6 +315,9 @@ class DocumentStore:
         if "pdf" in chosen:
             data = render_pdf(blocks, document.title, prefs, subject=document.kind)
             _atomic_write(folder / "content.pdf", data)
+        if "docx" in chosen:
+            data = render_docx(blocks, document.title, prefs, subject=document.kind)
+            _atomic_write(folder / "content.docx", data)
 
     def render_version(
         self,
@@ -344,6 +348,8 @@ class DocumentStore:
             data = render_text(blocks, prefs).encode("utf-8")
         elif fmt == "html":
             data = render_html(blocks, document.title, prefs).encode("utf-8")
+        elif fmt == "docx":
+            data = render_docx(blocks, document.title, prefs, subject=document.kind)
         else:
             data = render_pdf(blocks, document.title, prefs, subject=document.kind)
         if write or not path.exists():

@@ -19,6 +19,7 @@ from .exporters import to_csv, to_json, to_slides
 from .markdown import parse_markdown
 from .merge import merge3
 from .prefs import AUDIENCES, DETAILS, EMPHASIS, PAGE_SIZES, TONES, PrefError, Prefs
+from .render_docx import render_docx
 from .render_html import render_html
 from .render_pdf import render_pdf
 from .render_text import render_text
@@ -47,7 +48,7 @@ def build_parser() -> argparse.ArgumentParser:
     generate.add_argument("--audience", choices=AUDIENCES, default=None)
     generate.add_argument("--pref", action="append", default=[], metavar="KEY=VALUE")
     generate.add_argument("--spec", default=None, help="JSON spec file (or - for stdin)")
-    generate.add_argument("--format", action="append", default=None, help="md,txt,pdf,html")
+    generate.add_argument("--format", action="append", default=None, help="md,txt,pdf,docx,html")
     generate.add_argument("--message", default="Initial version")
     generate.add_argument("--out", default=None, help="copy the rendered files to this folder")
     generate.add_argument("--json", action="store_true")
@@ -114,14 +115,14 @@ def build_parser() -> argparse.ArgumentParser:
     export = sub.add_parser("export", help="export for other tools (csv, json, slides)")
     export.add_argument("document")
     export.add_argument("-v", "--version", type=int, default=None)
-    export.add_argument("--format", choices=("md", "txt", "pdf", "html", "csv", "json", "slides"), required=True)
+    export.add_argument("--format", choices=("md", "txt", "pdf", "docx", "html", "csv", "json", "slides"), required=True)
     export.add_argument("--out", default=None)
     common(export)
     export.set_defaults(func=cmd_export)
 
     convert = sub.add_parser("convert", help="convert an existing Markdown/text file")
     convert.add_argument("input")
-    convert.add_argument("--to", default="md,txt,pdf,html")
+    convert.add_argument("--to", default="md,txt,pdf,docx,html")
     convert.add_argument("--out", default=".")
     convert.add_argument("--title", default=None)
     common(convert)
@@ -351,6 +352,8 @@ def cmd_export(args: argparse.Namespace) -> int:
         payload = render_text(blocks, prefs).encode("utf-8")
     elif fmt == "pdf":
         payload = store.render_version(document.id, number, "pdf")
+    elif fmt == "docx":
+        payload = store.render_version(document.id, number, "docx")
     elif fmt == "html":
         payload = render_html(blocks, document.title, prefs).encode("utf-8")
     elif fmt == "csv":
@@ -393,6 +396,8 @@ def cmd_convert(args: argparse.Namespace) -> int:
             data = render_html(blocks, title, prefs).encode("utf-8")
         elif fmt == "pdf":
             data = render_pdf(blocks, title, prefs)
+        elif fmt == "docx":
+            data = render_docx(blocks, title, prefs)
         else:
             print(f"  skipped unknown format {fmt!r}", file=sys.stderr)
             continue

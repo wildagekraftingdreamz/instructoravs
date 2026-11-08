@@ -476,7 +476,7 @@
     if ($("toneSelect").value !== "professional") diffs.push(`Tone: ${label("toneSelect")}`);
     if ($("audienceSelect").value !== "general") diffs.push(`Audience: ${label("audienceSelect")}`);
     const selected = formats();
-    const defaults = ["md", "txt", "pdf"];
+    const defaults = ["md", "txt", "pdf", "docx"];
     if (selected.length !== defaults.length || !defaults.every((value) => selected.includes(value))) {
       const names = selected.length ? selected.map((value) => `.${value}`).join(" ") : "none";
       diffs.push(`Formats: ${names}`);
@@ -561,7 +561,7 @@
     $("toneSelect").value = "professional";
     $("audienceSelect").value = "general";
     document.querySelectorAll("#formatPills input").forEach((box) => {
-      box.checked = ["md", "txt", "pdf"].includes(box.value);
+      box.checked = ["md", "txt", "pdf", "docx"].includes(box.value);
     });
     const select = $("playbookCategory");
     if (select.options.length > 1) select.value = "all";
@@ -661,7 +661,7 @@
     $("mdPane").textContent = payload.markdown;
     $("txtPane").textContent = payload.text;
 
-    ["mdBtn", "pdfBtn", "editBtn", "diffBtn", "annotateBtn", "restoreBtn", "csvBtn"].forEach((id) => {
+    ["mdBtn", "pdfBtn", "docxBtn", "editBtn", "diffBtn", "annotateBtn", "restoreBtn", "csvBtn"].forEach((id) => {
       $(id).disabled = false;
     });
     $("editWrap").hidden = true;
@@ -1240,6 +1240,7 @@
     });
     $("mdBtn").addEventListener("click", () => { window.location.href = fileUrl("md"); });
     $("pdfBtn").addEventListener("click", () => { window.location.href = fileUrl("pdf"); });
+    $("docxBtn").addEventListener("click", () => { window.location.href = fileUrl("docx"); });
     $("csvBtn").addEventListener("click", () => {
       if (!state.doc) return;
       window.location.href = `${API}/documents/${encodeURIComponent(state.doc.id)}/export?format=csv&version=${state.version}`;
