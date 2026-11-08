@@ -1,0 +1,60 @@
+# ALEX MORGAN
+
+**Senior IT Support Engineer**
+
+alex.morgan@example.com · +44 7700 900 123 · Manchester, UK · linkedin.com/in/alexmorgan
+
+---
+
+## Professional summary
+
+Senior support engineer with eight years across managed Windows estates, Microsoft 365 and endpoint security. Known for turning recurring tickets into documented self-service guides.
+
+## Core skills
+
+- **Platforms** — Windows 10/11 · macOS · Microsoft 365 · Intune
+- **Tooling** — PowerShell · Entra ID · ServiceNow · JAMF
+- **Practice** — ITIL 4 · Knowledge management · Root-cause analysis
+
+## Experience
+
+### Senior IT Support Engineer — Northwind Logistics
+
+*Jan 2021 - Present · Manchester*
+
+- Own second-line support for 1,200 users across 14 sites, closing 94% of tickets within SLA.
+- Rebuilt the onboarding runbook, cutting first-day setup from 90 to 35 minutes.
+- Introduced Intune compliance policies that removed 70% of manual patching checks.
+
+### IT Support Technician — Cedar Health
+
+*2017 - 2020 · Leeds*
+
+- Supported clinical staff across three hospitals on a 24/7 rota.
+- Wrote 40 knowledge-base articles adopted by the wider service desk.
+
+## Education
+
+### BSc (Hons) Computing — Leeds Beckett University
+
+*2013 - 2016 · First class*
+
+## Certifications
+
+- Microsoft Certified: Endpoint Administrator (2023)
+- ITIL 4 Foundation (2021)
+
+## Selected projects
+
+### Self-service password reset
+
+Rolled out SSPR with MFA for 1,200 users.
+
+- Password tickets fell by 62% in the first quarter after launch.
+
+## Additional information
+
+|   |   |
+| --- | --- |
+| Languages | English (native), German (B1) |
+| Availability | One month's notice |

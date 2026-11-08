@@ -1,0 +1,4 @@
+# The document engine is pure standard library.
+# These two are only for the local studio web app.
+fastapi>=0.115
+uvicorn>=0.30

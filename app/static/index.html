@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Instructoravs</title>
+<link rel="icon" type="image/svg+xml" href="/static/logo.svg?v=1">
+<link rel="stylesheet" href="/static/soul-tokens.css?v=1">
+<link rel="stylesheet" href="/static/styles.css?v=3">
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <span class="logo"><img src="/static/logo.svg?v=1" alt="" width="26" height="26"></span>
+    Instructoravs <em>studio</em>
+  </div>
+  <div class="top-right">
+    <span id="storeBadge" class="badge">checking store…</span>
+    <span id="engineBadge" class="badge good">local · nothing leaves this machine</span>
+  </div>
+</header>
+
+<main class="grid">
+
+  <!-- ── output settings ───────────────────────────────────────────────── -->
+  <section class="card wide toolbar">
+    <div class="field">
+      <label for="detailSelect">Detail</label>
+      <div class="control">
+        <select id="detailSelect">
+          <option value="brief">Brief</option>
+          <option value="standard" selected>Standard</option>
+          <option value="detailed">Detailed</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label for="toneSelect">Tone</label>
+      <div class="control">
+        <select id="toneSelect">
+          <option value="professional" selected>Professional</option>
+          <option value="friendly">Friendly</option>
+          <option value="concise">Concise</option>
+          <option value="formal">Formal</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label for="audienceSelect">Audience</label>
+      <div class="control">
+        <select id="audienceSelect">
+          <option value="general" selected>General staff</option>
+          <option value="beginner">Beginner</option>
+          <option value="expert">Expert</option>
+        </select>
+      </div>
+    </div>
+    <div class="field grow">
+      <label>Formats</label>
+      <div class="control formats" id="formatPills">
+        <label class="pill"><input type="checkbox" value="md" checked><span>.md</span></label>
+        <label class="pill"><input type="checkbox" value="txt" checked><span>.txt</span></label>
+        <label class="pill"><input type="checkbox" value="pdf" checked><span>.pdf</span></label>
+        <label class="pill"><input type="checkbox" value="html"><span>.html</span></label>
+      </div>
+    </div>
+    <div class="field">
+      <label>Preferences <span class="pref-state" id="prefState" hidden>custom</span></label>
+      <div class="control">
+        <button type="button" class="ghost-btn" id="resetPrefs"
+          title="Restore the default detail, tone, audience, formats and picker topic area">↺
+          Reset defaults</button>
+      </div>
+    </div>
+    <div id="prefLive" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+  </section>
+
+  <!-- ── brief ─────────────────────────────────────────────────────────── -->
+  <section class="card wide">
+    <div class="card-head">
+      <h2>Brief</h2>
+      <div class="tabs" id="kindTabs" role="tablist" aria-label="Document type">
+        <button type="button" data-kind="auto" class="active" role="tab" aria-selected="true">Auto</button>
+        <button type="button" data-kind="form" role="tab" aria-selected="false">Form</button>
+        <button type="button" data-kind="guide" role="tab" aria-selected="false">IT guide</button>
+        <button type="button" data-kind="cv" role="tab" aria-selected="false">CV</button>
+        <button type="button" data-kind="spec" role="tab" aria-selected="false">Spec JSON</button>
+      </div>
+    </div>
+
+    <p class="note" id="briefNote">
+      One sentence is enough. A built-in playbook supplies prerequisites, steps, checks and
+      troubleshooting — then detail, tone and audience reshape it.
+    </p>
+
+    <div class="composer" id="composer">
+      <textarea id="instruction" rows="3"
+        placeholder="Create a step-by-step guide for user login"></textarea>
+      <div class="composer-btns">
+        <button id="generateBtn" class="send-btn">Generate ↵</button>
+        <button id="specBtn" class="ghost-btn" hidden>Edit spec</button>
+      </div>
+    </div>
+
+    <!-- ── guided form: builds the same spec the JSON tab edits ────────── -->
+    <div class="form-panel" id="formPanel" hidden>
+      <div class="form-toolbar">
+        <div class="tabs small" id="formModeTabs" role="tablist" aria-label="Form type">
+          <button type="button" data-form="guide" class="active" role="tab" aria-selected="true">Guide fields</button>
+          <button type="button" data-form="cv" role="tab" aria-selected="false">CV fields</button>
+        </div>
+        <span class="meta" id="formModeMeta"></span>
+        <div class="form-tools">
+          <button type="button" class="ghost-btn" id="formExample">Load example</button>
+          <button type="button" class="ghost-btn" id="formJson">View JSON</button>
+        </div>
+      </div>
+
+      <div class="form-grid" id="guideForm">
+        <label class="form-row wide">
+          <span>Title</span>
+          <input id="gTitle" placeholder="Issuing a loan laptop">
+        </label>
+        <label class="form-row wide">
+          <span>Purpose</span>
+          <textarea id="gPurpose" rows="2"
+            placeholder="One or two sentences: what this guide makes possible."></textarea>
+        </label>
+        <label class="form-row"><span>Applies to</span><input id="gApplies" placeholder="Windows 10/11 workstations"></label>
+        <label class="form-row"><span>Audience</span><input id="gAudience" placeholder="General staff"></label>
+        <label class="form-row"><span>Time needed</span><input id="gTime" placeholder="10 minutes"></label>
+        <label class="form-row"><span>Owner</span><input id="gOwner" placeholder="IT Service Desk"></label>
+        <label class="form-row wide">
+          <span>Prerequisites — one per line</span>
+          <textarea id="gPrereqs" rows="3" placeholder="A managed device on the corporate network"></textarea>
+        </label>
+
+        <div class="form-block wide">
+          <div class="form-block-head">
+            <span>Steps</span>
+            <button type="button" class="ghost-btn tiny" id="gAddStep">+ Add step</button>
+          </div>
+          <div class="repeat" id="gSteps"></div>
+        </div>
+
+        <div class="form-block wide">
+          <div class="form-block-head">
+            <span>Troubleshooting</span>
+            <button type="button" class="ghost-btn tiny" id="gAddIssue">+ Add row</button>
+          </div>
+          <div class="repeat" id="gIssues"></div>
+        </div>
+
+        <label class="form-row wide">
+          <span>Verification checklist — one per line</span>
+          <textarea id="gVerify" rows="3" placeholder="The user can sign in without help"></textarea>
+        </label>
+        <label class="form-row wide">
+          <span>Footer note</span>
+          <input id="gFooter" placeholder="Review every 6 months, or after a platform change">
+        </label>
+      </div>
+
+      <div class="form-grid" id="cvForm" hidden>
+        <label class="form-row"><span>Full name</span><input id="cvName" placeholder="Alex Morgan"></label>
+        <label class="form-row"><span>Headline</span><input id="cvHeadline" placeholder="Senior IT Support Engineer"></label>
+        <label class="form-row"><span>Email</span><input id="cvEmail" placeholder="alex@example.com"></label>
+        <label class="form-row"><span>Phone</span><input id="cvPhone" placeholder="+44 7700 900 123"></label>
+        <label class="form-row"><span>Location</span><input id="cvLocation" placeholder="Manchester, UK"></label>
+        <label class="form-row"><span>LinkedIn / website</span><input id="cvLinkedin" placeholder="linkedin.com/in/you"></label>
+        <label class="form-row wide">
+          <span>Professional summary</span>
+          <textarea id="cvSummary" rows="3" placeholder="What you do, your years of experience and the result you are known for."></textarea>
+        </label>
+        <label class="form-row wide">
+          <span>Skills — one group per line, <code>Group: skill, skill</code></span>
+          <textarea id="cvSkills" rows="3" placeholder="Platforms: Windows 11, macOS, Microsoft 365"></textarea>
+        </label>
+        <label class="form-row wide">
+          <span>Certifications — one per line</span>
+          <textarea id="cvCerts" rows="2" placeholder="Microsoft Certified: Endpoint Administrator (2023)"></textarea>
+        </label>
+
+        <div class="form-block wide">
+          <div class="form-block-head">
+            <span>Experience</span>
+            <button type="button" class="ghost-btn tiny" id="cvAddRole">+ Add role</button>
+          </div>
+          <div class="repeat" id="cvRoles"></div>
+        </div>
+
+        <div class="form-block wide">
+          <div class="form-block-head">
+            <span>Education</span>
+            <button type="button" class="ghost-btn tiny" id="cvAddEducation">+ Add education</button>
+          </div>
+          <div class="repeat" id="cvEducation"></div>
+        </div>
+
+        <details class="form-more wide">
+          <summary>Projects, languages and availability</summary>
+          <div class="form-block">
+            <div class="form-block-head">
+              <span>Projects</span>
+              <button type="button" class="ghost-btn tiny" id="cvAddProject">+ Add project</button>
+            </div>
+            <div class="repeat" id="cvProjects"></div>
+          </div>
+          <div class="form-grid inner">
+            <label class="form-row wide">
+              <span>Languages — one per line</span>
+              <textarea id="cvLanguages" rows="2" placeholder="English (native)"></textarea>
+            </label>
+            <label class="form-row"><span>Availability</span><input id="cvAvailability" placeholder="One month's notice"></label>
+            <label class="form-row"><span>References</span><input id="cvReferences" placeholder="Available on request"></label>
+          </div>
+        </details>
+      </div>
+
+      <div class="form-actions">
+        <span class="meta" id="formSummary"></span>
+        <button type="button" class="send-btn" id="formGenerate">Generate from form</button>
+      </div>
+      <p class="note form-note">
+        The form builds the same spec the JSON editor uses — nothing hidden. “View JSON” shows it.
+      </p>
+    </div>
+
+    <div class="chips-bar" id="playbookBar">
+      <button type="button" class="ghost-btn" id="playbookBtn"
+        title="Browse every built-in topic (Ctrl+K)" aria-keyshortcuts="Control+K Meta+K">▤ Browse playbooks
+        <span class="count" id="playbookTotal">18</span></button>
+      <span class="meta">Every built-in topic brings prerequisites, steps, checks and
+        troubleshooting.</span>
+    </div>
+
+    <div class="chips" id="chips" aria-label="Playbook topic areas"></div>
+    <div class="hint" id="hint"></div>
+  </section>
+
+  <!-- ── the document ──────────────────────────────────────────────────── -->
+  <section class="card wide doc-card">
+    <div class="card-head">
+      <h2>Document</h2>
+      <div class="tabs" id="viewTabs" role="tablist" aria-label="Document view">
+        <button type="button" data-view="preview" class="active" role="tab" aria-selected="true">Preview</button>
+        <button type="button" data-view="markdown" role="tab" aria-selected="false">Markdown</button>
+        <button type="button" data-view="text" role="tab" aria-selected="false">Text</button>
+        <button type="button" data-view="pdf" role="tab" aria-selected="false">PDF</button>
+      </div>
+      <div class="doc-actions">
+        <span class="chip" id="versionChip" hidden>v1</span>
+        <button class="ghost-btn" id="mdBtn" disabled>⤓ .md</button>
+        <button class="ghost-btn" id="pdfBtn" disabled>⤓ .pdf</button>
+        <button class="ghost-btn" id="editBtn" disabled>✎ Edit</button>
+      </div>
+    </div>
+
+    <div class="doc-head">
+      <h3 id="docTitle">No document yet</h3>
+      <div class="doc-stats" id="docStats"></div>
+    </div>
+
+    <div class="pane-wrap">
+      <div class="empty-doc" id="emptyDoc">
+        <div class="empty-mark">▤</div>
+        <p>Describe a guide or paste a CV brief. The document appears here and every saved
+          version stays on disk.</p>
+      </div>
+      <div id="previewPane" class="doc-pane" hidden></div>
+      <pre id="mdPane" class="code-pane" hidden></pre>
+      <pre id="txtPane" class="code-pane" hidden></pre>
+      <div id="pdfPaneWrap" class="pdf-pane" hidden>
+        <iframe id="pdfPane" title="PDF preview"></iframe>
+      </div>
+    </div>
+
+    <div class="edit-wrap" id="editWrap" hidden>
+      <div class="edit-head">
+        <span class="sum-title">Edit Markdown</span>
+        <span class="meta">Saving adds a version; earlier versions stay intact.</span>
+      </div>
+      <textarea id="editArea" rows="14" spellcheck="false"></textarea>
+      <div class="edit-actions">
+        <input id="editMessage" placeholder="Version note — what changed?">
+        <button class="ghost-btn" id="editCancel">Cancel</button>
+        <button class="send-btn" id="editSave">Save as new version</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── versions ──────────────────────────────────────────────────────── -->
+  <section class="card versions">
+    <div class="card-head">
+      <h2>Versions</h2>
+      <span class="meta" id="versionMeta">no document</span>
+    </div>
+    <ul class="history" id="versionList">
+      <li class="empty">Versions appear after the first generate.</li>
+    </ul>
+    <div class="actions">
+      <button class="ghost-btn" id="diffBtn" disabled>⇄ Compare</button>
+      <button class="ghost-btn" id="annotateBtn" disabled>✎ Annotate</button>
+      <button class="ghost-btn" id="restoreBtn" disabled>↺ Restore</button>
+      <button class="ghost-btn" id="csvBtn" disabled title="Steps as a spreadsheet">▦ .csv</button>
+    </div>
+  </section>
+
+  <!-- ── library ───────────────────────────────────────────────────────── -->
+  <section class="card library">
+    <div class="card-head">
+      <h2>Library</h2>
+      <span class="meta" id="libMeta">0 documents</span>
+    </div>
+    <ul class="history" id="docList">
+      <li class="empty">Every generated document is listed here.</li>
+    </ul>
+  </section>
+
+</main>
+
+<footer>
+  Documents are Markdown-first and versioned on this machine. PDFs are written by the
+  bundled engine — no reportlab, no browser printing, no upload.
+</footer>
+
+<!-- ── annotate a version ────────────────────────────────────────────────── -->
+<dialog id="annotateDialog" class="snap-dialog" aria-labelledby="annotateTitle">
+  <div class="snap-head">
+    <h2 id="annotateTitle">Annotate version</h2>
+    <button class="icon-btn" data-close aria-label="Close">✕</button>
+  </div>
+  <div class="snap-sub" id="annotateSub"></div>
+  <div class="dialog-body">
+    <textarea id="annotateText" rows="4"
+      placeholder="Correction, review note, or where the content came from…"></textarea>
+    <div class="dialog-actions">
+      <button class="send-btn" id="annotateSave">Save note</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- ── compare versions ──────────────────────────────────────────────────── -->
+<dialog id="diffDialog" class="snap-dialog" aria-labelledby="diffTitle">
+  <div class="snap-head">
+    <h2 id="diffTitle">Compare versions</h2>
+    <button class="icon-btn" data-close aria-label="Close">✕</button>
+  </div>
+  <div class="snap-sub">Line changes in the stored Markdown.</div>
+  <div class="dialog-body">
+    <div class="diff-controls">
+      <label>from <select id="diffA"></select></label>
+      <label>to <select id="diffB"></select></label>
+      <button class="ghost-btn" id="diffRun">Compare</button>
+    </div>
+    <pre id="diffBody" class="snap-body">Choose two versions.</pre>
+  </div>
+</dialog>
+
+<!-- ── spec JSON ─────────────────────────────────────────────────────────── -->
+<dialog id="specDialog" class="snap-dialog" aria-labelledby="specTitle">
+  <div class="snap-head">
+    <h2 id="specTitle">Document spec</h2>
+    <button class="icon-btn" data-close aria-label="Close">✕</button>
+  </div>
+  <div class="snap-sub">
+    Full control over sections, tables and CV fields. Valid JSON; “kind” is guide or cv.
+  </div>
+  <div class="dialog-body">
+    <textarea id="specText" rows="16" spellcheck="false"></textarea>
+    <div class="dialog-actions">
+      <button class="ghost-btn" id="specExample">Load example</button>
+      <button class="ghost-btn" id="specClear">Clear</button>
+      <button class="send-btn" id="specSave">Use this spec</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- ── browse the built-in playbooks ─────────────────────────────────────── -->
+<dialog id="playbookDialog" class="snap-dialog playbook-dialog" aria-labelledby="playbookTitle">
+  <div class="snap-head">
+    <h2 id="playbookTitle">Built-in playbooks</h2>
+    <button class="icon-btn" data-close aria-label="Close">✕</button>
+  </div>
+  <div class="snap-sub">
+    Pick a topic to fill the brief. Every playbook brings prerequisites, ordered steps,
+    verification checks and troubleshooting.
+  </div>
+  <div class="dialog-body">
+    <div class="playbook-controls">
+      <input id="playbookSearch" type="search" autocomplete="off"
+        placeholder="Filter by topic, device or task">
+      <select id="playbookCategory" aria-label="Topic area">
+        <option value="all">All topic areas</option>
+      </select>
+    </div>
+    <div class="playbook-list" id="playbookList"></div>
+    <p class="note playbook-empty" id="playbookEmpty" hidden>No playbook matches that filter.</p>
+    <p class="note playbook-hint">↑ ↓ move · Home/End jump · Enter selects · Esc closes</p>
+  </div>
+</dialog>
+
+<div id="toast" class="toast" hidden></div>
+
+<script src="/static/app.js?v=8"></script>
+</body>
+</html>

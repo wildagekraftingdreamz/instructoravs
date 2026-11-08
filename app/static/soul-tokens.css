@@ -1,0 +1,25 @@
+/* Soul Apps · shared design tokens
+   Same palette as the Voicemindly / Zana family, served locally so the app
+   has no external dependency. */
+
+:root {
+  /* surfaces, darkest to lightest */
+  --bg: #0b0e14;        /* page */
+  --panel: #121621;     /* cards */
+  --panel-2: #171c29;   /* raised blocks inside a card */
+  --sunken: #0a0d15;    /* inputs, wells, panes */
+
+  /* lines and text */
+  --line: #232a3b;
+  --text: #e6eaf3;
+  --muted: #8d97ad;
+
+  /* accent: one colour with a job — the primary action and live state */
+  --accent: #5eead4;
+  --accent-2: #8b8bff;
+
+  /* status */
+  --danger: #fb7185;
+  --ok: #4ade80;
+  --warn: #fbbf24;
+}

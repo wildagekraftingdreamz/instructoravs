@@ -1,0 +1,67 @@
+{
+  "kind": "guide",
+  "title": "Issuing a loan laptop",
+  "subtitle": "Service desk procedure for the loan pool",
+  "purpose": "Hand a configured loan laptop to a colleague and record the handover so the asset can be chased if it is not returned.",
+  "meta": {
+    "Applies to": "Loan pool, cabinet 2",
+    "Audience": "Service desk",
+    "Time needed": "15 minutes",
+    "Owner": "Hardware team"
+  },
+  "prerequisites": [
+    "The request has an approved ticket.",
+    "A charged laptop from the loan pool is available.",
+    "The colleague has signed the loan agreement."
+  ],
+  "sections": [
+    {
+      "heading": "Step-by-step",
+      "steps": [
+        {
+          "title": "Pick the next laptop",
+          "detail": "Take the oldest return in the pool so the stock rotates and batteries stay exercised."
+        },
+        {
+          "title": "Record the asset tag",
+          "detail": "Add the tag, the colleague's name and the expected return date to the handover sheet."
+        },
+        {
+          "title": "Confirm the build",
+          "detail": "Sign in once with a test account to confirm the image, VPN profile and printer queue are present."
+        },
+        {
+          "title": "Sign the handover",
+          "detail": "Ask the colleague to confirm receipt on the ticket, then attach the signed loan agreement."
+        }
+      ]
+    },
+    {
+      "heading": "Verify it worked",
+      "checklist": [
+        "The ticket shows the asset tag and return date.",
+        "The colleague can sign in and reach the intranet.",
+        "The pool count on the handover sheet matches the cabinet."
+      ]
+    },
+    {
+      "heading": "Troubleshooting",
+      "table": {
+        "header": ["Symptom", "What to do"],
+        "rows": [
+          ["Laptop will not power on", "Swap it for the next unit and flag this one for repair."],
+          ["No loan unit available", "Escalate to the hardware team with the ticket number."],
+          ["VPN profile missing", "Reimage before handing over; do not install the profile by hand."]
+        ]
+      },
+      "note": "Never hand over a unit without a signed loan agreement; recovery without one is slow."
+    },
+    {
+      "heading": "If you need more help",
+      "paragraphs": [
+        "Contact the hardware team on ext. 4360 with the ticket number and the asset tag."
+      ]
+    }
+  ],
+  "footer": "Review every 6 months, or when the loan pool process changes."
+}

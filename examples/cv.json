@@ -1,0 +1,61 @@
+{
+  "kind": "cv",
+  "name": "Alex Morgan",
+  "headline": "Senior IT Support Engineer",
+  "contact": {
+    "email": "alex.morgan@example.com",
+    "phone": "+44 7700 900 123",
+    "location": "Manchester, UK",
+    "linkedin": "linkedin.com/in/alexmorgan"
+  },
+  "summary": "Senior support engineer with eight years across managed Windows estates, Microsoft 365 and endpoint security. Known for turning recurring tickets into documented self-service guides.",
+  "skills": {
+    "Platforms": ["Windows 10/11", "macOS", "Microsoft 365", "Intune"],
+    "Tooling": ["PowerShell", "Entra ID", "ServiceNow", "JAMF"],
+    "Practice": ["ITIL 4", "Knowledge management", "Root-cause analysis"]
+  },
+  "experience": [
+    {
+      "role": "Senior IT Support Engineer",
+      "company": "Northwind Logistics",
+      "dates": "Jan 2021 - Present",
+      "location": "Manchester",
+      "bullets": [
+        "Own second-line support for 1,200 users across 14 sites, closing 94% of tickets within SLA.",
+        "Rebuilt the onboarding runbook, cutting first-day setup from 90 to 35 minutes.",
+        "Introduced Intune compliance policies that removed 70% of manual patching checks."
+      ]
+    },
+    {
+      "role": "IT Support Technician",
+      "company": "Cedar Health",
+      "dates": "2017 - 2020",
+      "location": "Leeds",
+      "bullets": [
+        "Supported clinical staff across three hospitals on a 24/7 rota.",
+        "Wrote 40 knowledge-base articles adopted by the wider service desk."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "qualification": "BSc (Hons) Computing",
+      "institution": "Leeds Beckett University",
+      "dates": "2013 - 2016",
+      "grade": "First class"
+    }
+  ],
+  "certifications": [
+    "Microsoft Certified: Endpoint Administrator (2023)",
+    "ITIL 4 Foundation (2021)"
+  ],
+  "projects": [
+    {
+      "name": "Self-service password reset",
+      "summary": "Rolled out SSPR with MFA for 1,200 users.",
+      "bullets": ["Password tickets fell by 62% in the first quarter after launch."]
+    }
+  ],
+  "languages": ["English (native)", "German (B1)"],
+  "availability": "One month's notice"
+}
