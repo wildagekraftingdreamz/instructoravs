@@ -9,7 +9,7 @@ description = "Generate, version and export IT help guides and CVs as Markdown, 
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
-authors = [{ name = "Soul Apps" }]
+authors = [{ name = "wildagekraftingdreamz" }]
 dependencies = []
 
 [project.optional-dependencies]
