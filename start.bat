@@ -9,12 +9,22 @@ if errorlevel 1 (
   exit /b 1
 )
 
-if not exist ".venv\Scripts\python.exe" (
-  echo Creating .venv ...
-  python -m venv .venv || goto :failed
+rem The virtualenv is created outside this folder on purpose. Some drives cannot
+rem execute native binaries stored on them, and a venv is mostly native binaries
+rem (python.exe, DLLs). LOCALAPPDATA always runs them. Override with
+rem INSTRUCTORAVS_VENV if you want it elsewhere.
+if defined INSTRUCTORAVS_VENV (
+  set "VENV=%INSTRUCTORAVS_VENV%"
+) else (
+  set "VENV=%LOCALAPPDATA%\Instructoravs\venv"
 )
 
-set "PY=.venv\Scripts\python.exe"
+if not exist "%VENV%\Scripts\python.exe" (
+  echo Creating virtualenv in "%VENV%" ...
+  python -m venv "%VENV%" || goto :failed
+)
+
+set "PY=%VENV%\Scripts\python.exe"
 "%PY%" -c "import fastapi, uvicorn" >nul 2>nul
 if errorlevel 1 (
   echo Installing studio dependencies ...

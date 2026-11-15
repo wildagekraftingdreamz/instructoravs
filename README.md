@@ -31,8 +31,12 @@ workspace added.
 
 ## Quick start (Windows)
 
-Double-click **`start.bat`**. On first run it creates `.venv`, installs
-`requirements.txt`, starts the app on `http://127.0.0.1:8770` and opens the browser.
+Double-click **`start.bat`**. On first run it creates a virtualenv in
+`%LOCALAPPDATA%\Instructoravs\venv` (kept outside this folder because some drives
+cannot execute native binaries stored on them), installs
+`requirements.txt`, starts the app on `http://127.0.0.1:8770` and opens the
+browser. Set `INSTRUCTORAVS_VENV` to a full path before running `start.bat` to
+put the virtualenv somewhere else.
 **`stop.bat`** stops the Python process listening on that port.
 
 Any OS:
